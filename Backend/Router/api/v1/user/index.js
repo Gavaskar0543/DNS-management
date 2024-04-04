@@ -1,4 +1,6 @@
 const express = require('express');
 const router = express.Router();
-router.use('/api',require('./api'));
+const user = require('../../../../Controller/Api/V1/UserController');
+
+
 module.exports = router;

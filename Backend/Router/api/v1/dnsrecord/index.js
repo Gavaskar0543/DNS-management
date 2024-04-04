@@ -1,4 +1,5 @@
 const express = require('express');
 const router = express.Router();
-router.use('/api',require('./api'));
+const dnsController = require('../../../../Controller/Api/V1/DNSRecordController');
+
 module.exports = router;
