@@ -1,8 +1,10 @@
 const express = require('express');
 const port = 8000;
 const app = express();
+require('dotenv').config();
 
 
+const db = require('./Config/mongoose');
 
 app.listen(port,(err)=>{
     if(err){
