@@ -1,5 +1,5 @@
 const User = require('../../../Model/UserModel');
-
+const jwt = require('jsonwebtoken');
 /**API #Creating New User Account**/
 module.exports.createNewUser  =async function(req,res){
     try{
@@ -28,4 +28,30 @@ module.exports.createNewUser  =async function(req,res){
             success:false
         })
     }
+}
+
+module.exports.createSession = async function(req,res){
+try{
+   let user = await User.findOne({email:req.body.email});
+   if(!user || user.password != req.body.password){
+    return res.status(401).json({
+        message:'Invalid UserName or Password',
+        success:false
+    });
+
+   }
+   return res.status(200).json({
+    message:"User Signin Successfull",
+    success:true,
+    data:  {
+        token: jwt.sign(user.toJSON(),process.env.jwt_key, {expiresIn:  '100000'})
+    }
+   })
+}
+catch(error){
+    return res.status(500).json({
+        message:error.message,
+        success:false
+    })
+}
 }
