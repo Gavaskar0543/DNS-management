@@ -11,31 +11,17 @@ const route53 = new AWS.Route53({apiVersion: '2016-11-28'});
 
 // API endpoint for creating a hosted zone
 module.exports.createHostedZone = async (req, res) => {
-  const { zoneId, hostname, recordType, value } = req.body;
-
-  const params = {
-    ChangeBatch: {
-      Changes: [
-        {
-          Action: "CREATE",
-          ResourceRecordSet: {
-            Name: hostname,
-            Type: recordType,
-            TTL: 300, // Set a TTL of 5 minutes
-            ResourceRecords: [{ Value: value }],
-          },
-        },
-      ],
-    },
-    HostedZoneId: zoneId,
-  };
-
   try {
-    await route53.changeResourceRecordSets(params).promise();
-    res.json({ message: "Record created successfully" });
+    const { domainName } = req.body; // Assuming you pass the domain name in the request body
+    const params = {
+      Name: domainName,
+      CallerReference: `${Date.now()}` // Unique reference for each request
+    };
+    const data = await route53.createHostedZone(params).promise();
+    res.status(201).json(data);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Error creating record" });
+    console.error('Error creating hosted zone:', error);
+    res.status(500).json({ error: 'Failed to create hosted zone' });
   }
 };
 
