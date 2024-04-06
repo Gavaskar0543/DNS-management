@@ -107,34 +107,17 @@ const updateRecord = async (req, res) => {
 };
 
 
-const deleteRecord = async (req, res) => {
-  const { recordId } = req.params;
-
-  // Implement logic to retrieve record details using recordId
-
-  const params = {
-    ChangeBatch: {
-      Changes: [
-        {
-          Action: "DELETE",
-          ResourceRecordSet: {
-            Name: retrievedRecord.name, // Replace with retrieved record name
-            Type: retrievedRecord.type, // Replace with retrieved record type
-            TTL: 300,
-          },
-        },
-      ],
-    },
-    HostedZoneId: retrievedRecord.zoneId, // Replace with retrieved zoneId
-  };
-
+module.exports.deleteHostedZone = async (req, res) => {
   try {
-    await route53.changeResourceRecordSets(params).promise();
-    res.json({ message: "Record deleted successfully" });
-  } 
-  catch (error){
-    return res.status(500).json({
-      message:error.message
-    })
+    const { hostedZoneId } = req.query; // Assuming you pass the hosted zone ID as a URL parameter
+    const params = {
+      Id: hostedZoneId // The ID of the hosted zone to be deleted
+    };
+    const data = await route53.deleteHostedZone(params).promise();
+    res.status(200).json({ message: 'Hosted zone deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting hosted zone:', error);
+    res.status(500).json({ error: 'Failed to delete hosted zone',
+  message:error.message });
   }
-}
+};
