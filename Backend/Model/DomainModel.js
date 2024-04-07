@@ -9,8 +9,8 @@ const domainSchema = new mongoose.Schema({
         required:true,
         unique:true
     },
-    record:{
-        type:[Object],
+    hostedZoneId:{
+        type:String,
         required:true
     }
 },{

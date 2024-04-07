@@ -44,7 +44,7 @@ try{
     message:"User Signin Successfull",
     success:true,
     data:  {
-        token: jwt.sign(user.toJSON(),process.env.jwt_key, {expiresIn:  '100000'})
+        token: jwt.sign(user.toJSON(),process.env.JWT_KEY, {expiresIn:  '100000'})
     }
    })
 }

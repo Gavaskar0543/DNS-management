@@ -6,10 +6,15 @@ require('dotenv').config();
 app.use(express.urlencoded({extended:true}))
 //database
 const db = require('./Config/mongoose');
+//passport
+const passport = require('passport');
 //jwt_strategy
-const jwt_strategy = require('./Config/passport_jwt_strategy');
+const jwtStrategy = require('./Config/passport_jwt_strategy');
 
 
+
+//intializing passport to authorize routes
+app.use(passport.initialize());
 //routes
 app.use('/',require('./Router'));
 app.listen(port,(err)=>{
