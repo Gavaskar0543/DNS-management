@@ -10,21 +10,21 @@ export default function SignupComponent() {
                
             <div className='mb-3'>
                 <input type='text' 
-                        className="shadow appearance-none border rounded w-64 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className="font-semibold shadow appearance-none border rounded w-64 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 placeholder='Name'/>
 
             </div>
 
             <div className='mb-3'>
                 <input type='email' 
-                        className="shadow appearance-none border rounded w-64 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                placeholder=' your email address'/>
+                        className=" font-semibold shadow appearance-none border rounded w-64 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline "
+                placeholder=' Enter email address' required />
 
             </div>
             <div className='mb-3'>
                 <input type='password' 
-                        className="shadow appearance-none border rounded w-64 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                placeholder='your password'/>
+                        className="font-semibold shadow appearance-none border rounded w-64 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                placeholder='Set password'/>
 
             </div>
            
