@@ -1,17 +1,52 @@
-import React from 'react'
+import React,{useState} from 'react'
 import Styled from 'styled-components'
 import { useNavigate } from 'react-router-dom'
+import { ROOT_URL } from '../../Urls';
+import {success,error} from '../../Config/toastify'
+import { useDispatch,useSelector } from "react-redux";
+import { setUser,setAuthtoken } from '../../Redux/Reducer/authSlice';
+import axios from 'axios'
 export default function SigninComponent() {
+    const [email,setemail] = useState('');
+    const [password,setpassword] = useState('');
+    const [creating,setcreating]=useState(false);
     const navigate = useNavigate();
+     const dispatch = useDispatch();
+
+
     const handlenavigation = () =>{
             navigate('/');
     }
-    const handleFormSubmit = (event)=>{
-             event.preventDefault();
-             navigate('/Home')
-    }
+ 
+
+
+    const handleFormSubmit = async (e)=>{
+        e.preventDefault();
+        let data = {
+            email:email,
+            password:btoa(password)
+        } 
+        setcreating(true)
+        try{
+           const postUrl = `${ROOT_URL}/user/createsession`
+          await  axios.post(postUrl, data)
+            .then(response => {
+              success('Authentication Successfull!');
+              navigate('/Home');
+              console.log(response.data.data.token);
+            })
+            .catch(err => {
+                setcreating(false);
+                error('Something went wrong');
+              console.error('Error:', err);
+            });
+        }
+        catch(error){
+            error('something went wrong try after sometime')
+        }
+        }
   return (
-   <Signin className=''>
+   <Signin className='' onSubmit={handleFormSubmit}>
         <div className='form rounded-xl shadow-xl '>
             <p className='text-center font-semibold text-4xl px-2 py-2 text-green-400 drop-shadow-md hover:drop-shadow-xl'>DNS Manager</p>
              <div className=' mt-4'>
@@ -27,18 +62,24 @@ export default function SigninComponent() {
             <div className='mb-3'>
                 <input type='email' 
                         className=" font-semibold shadow appearance-none border rounded w-64 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline "
-                placeholder=' Enter email address' required />
+                placeholder=' Enter email address' required
+                value={email}
+                onChange={(e)=>{setemail(e.target.value)}}
+                />
 
             </div>
             <div className='mb-3'>
                 <input type='password' 
                         className="font-semibold shadow appearance-none border rounded w-64 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                placeholder='Enter password'/>
+                placeholder='Enter password'
+                value={password}
+                onChange={(e)=>{setpassword(e.target.value)}}
+                />
 
             </div>
            
             <div className='mt-3 mb-3'>
-               <button className='rounded shadow-xl text-white bg-green-600 px-2 py-2 text-xl font-semibold hover:bg-green-800 w-64'>Login</button>
+               <button type='submit' className='rounded shadow-xl text-white bg-green-600 px-2 py-2 text-xl font-semibold hover:bg-green-800 w-64'>Login</button>
 
             </div>
                

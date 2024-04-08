@@ -1,12 +1,14 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import Styled from 'styled-components'
+import { ROOT_URL } from '../../Urls';
+import axios from 'axios'
 import { success ,error} from '../../Config/toastify';
-import {requestNewUserAccount} from '../../Api'
 export default function SignupComponent() {
     const [username,setusername] = useState('');
     const [email,setemail] = useState('');
     const [password,setpassword] = useState('');
+    const [creating,setcreating]=useState(false);
     const navigate = useNavigate();
     const handlenavigation = () =>{
         navigate('/signin');
@@ -18,16 +20,20 @@ let data = {
     username:username,
     email:email,
     password:btoa(password)
-}
+} 
+setcreating(true)
 try{
-    const response = await requestNewUserAccount(data);
-if(response.success){
-    success('Account Created')
-    navigate('/signin');
-}
-else{
-    error('something went wrong')
-}
+   const postUrl = `${ROOT_URL}/user/createaccount`
+  await  axios.post(postUrl, data)
+    .then(response => {
+      success('Account Created!');
+      navigate('/signin')
+    })
+    .catch(err => {
+        setcreating(false);
+        error('Something went wrong');
+      console.error('Error:', err);
+    });
 }
 catch(error){
     error('something went wrong try after sometime')
@@ -71,8 +77,13 @@ catch(error){
             </div>
            
             <div className='mt-3 mb-3'>
-               <button className='rounded shadow-xl text-white bg-green-600 px-2 py-2 text-xl font-semibold hover:bg-green-800 w-64'>Create</button>
+              {creating ? (
+                               <button className='rounded shadow-xl text-white bg-green-600 px-2 py-2 text-xl font-semibold hover:bg-green-800 w-64'>Createing Account</button>
 
+              ):(
+                               <button className='rounded shadow-xl text-white bg-green-600 px-2 py-2 text-xl font-semibold hover:bg-green-800 w-64'>Create</button>
+
+              )}
             </div>
                
                
