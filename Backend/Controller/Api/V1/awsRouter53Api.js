@@ -1,5 +1,6 @@
 const AWS = require('aws-sdk');
 const Domain = require('../../../Model/DomainModel');
+const deletedomain = require('./DomainController');
 AWS.config.update({
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -103,7 +104,10 @@ module.exports.deleteHostedZone = async (req, res) => {
       Id: hostedZoneId // The ID of the hosted zone to be deleted
     };
     const data = await route53.deleteHostedZone(params).promise();
+
+  if(deletedomain.deleteById){
     res.status(200).json({ message: 'Hosted zone deleted successfully' });
+  }
   } catch (error) {
     console.error('Error deleting hosted zone:', error);
     res.status(500).json({ error: 'Failed to delete hosted zone',

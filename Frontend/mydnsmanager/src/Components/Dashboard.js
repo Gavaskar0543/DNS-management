@@ -5,12 +5,13 @@ import {useNavigate} from 'react-router-dom'
 import axios from 'axios';
 import { ROOT_URL } from '../Urls';
 import {  useSelector } from 'react-redux';
-import { warning } from '../Config/toastify';
+import { warning,success,error } from '../Config/toastify';
 export default function Dashboard() {
   const [domains, setDomains] = useState([]);
   const [domainName,setdomainName] = useState('');
    // State to store domains data
    const [creating,setcreating] = useState(false);
+   const [startD,setStartD] = useState(false);
  const auth = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const handleNavigation = ()=>{
@@ -32,7 +33,7 @@ export default function Dashboard() {
       }
     };
     fetchData();
-   }, []);
+   }, [domainName]);
   
    
 
@@ -46,18 +47,47 @@ setcreating(true)
 
   try {
     const data = {
-     userid :auth.userId,
-     domainName :domainName
+     userId :auth.userId,
+     name :domainName
     };
     const postUrl = `${ROOT_URL}/domain/createHostedZone`;
-    const response = await axios.post(postUrl, data);
+    const response = await axios.post(postUrl, data, {
+      headers: {
+        'Authorization': `Bearer ${auth.authToken}`
+      }});
      success("Domain name added")
-  } catch (error) {
-    console.error('Error:', error);
+     setcreating(false);
+     setdomainName('');
+  } catch (err) {
+    console.error('Error:', err);
+    error("Something went wrong")
     setcreating(false);
     // Handle error here, if needed
   }
 
+   }
+   const handleDelete = async (id) =>{
+   setStartD(true);
+   return;
+    try {
+      const data = {
+      
+      id:id
+      };
+      const postUrl = `${ROOT_URL}/domain/deleteHostedZone`;
+      const response = await axios.delete(postUrl, data, {
+        headers: {
+          'Authorization': `Bearer ${auth.authToken}`
+        }});
+       success("Domain deleted")
+       setcreating(false);
+       setdomainName('');
+    } catch (err) {
+      console.error('Error:', err);
+      error("Something went wrong")
+      setcreating(false);
+      // Handle error here, if needed
+    }
    }
 
   return (
@@ -80,7 +110,7 @@ setcreating(true)
             </div>
             <div>
               {creating ? (
-                               <button className='rounded text-white px-2 py-2 w-32 bg-green-600 hover:bg-green-800'> Adding new Domain</button>
+                               <button className='rounded text-white px-2 py-2 text-sm bg-green-600 hover:bg-green-800'> Adding new Domain</button>
 
               ) : (
                                <button type="submit" className='rounded text-white px-2 py-2 w-32 bg-green-600 hover:bg-green-800'> Add Domain</button>
@@ -110,7 +140,13 @@ setcreating(true)
     <tr key={index} >
       <td onClick={handleNavigation} className='text-center border border-slate-700 underline text-blue-800 font-medium cursor-pointer'>{item.domainName}</td>
       <td className='text-center border border-slate-700'>{item.domainInfo.ChangeInfo.Status}</td>
-      <td className='text-center border border-slate-700 text-red-600 font-semibold'><p className='cursor-pointer text-sm'>Remove</p></td>
+        {startD ? (
+                <td  className='text-center border border-slate-700 text-red-600 font-semibold'><p className='cursor-pointer text-sm'>Deleteing...</p></td>
+
+        ):(
+                <td onClick={()=>{handleDelete(item._id)}} className='text-center border border-slate-700 text-red-600 font-semibold'><p className='cursor-pointer text-sm'>Remove</p></td>
+
+        )}
     </tr>
   ))} 
 
