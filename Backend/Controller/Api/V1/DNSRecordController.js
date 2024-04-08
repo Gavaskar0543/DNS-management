@@ -1,3 +1,15 @@
+const AWS = require('aws-sdk');
+
+
+AWS.config.update({
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    region: 'us-east-1' 
+})
+
+
+// Initialize AWS Route 53
+const route53 = new AWS.Route53({apiVersion: '2016-11-28'});
 
 // API endpoint for listing hosted zones
 module.exports.getRecords = async (req, res) => {

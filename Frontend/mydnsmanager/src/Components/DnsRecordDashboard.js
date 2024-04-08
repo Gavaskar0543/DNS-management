@@ -1,17 +1,49 @@
-import React from 'react'
+import React,{useEffect,useState} from 'react'
 import styled from 'styled-components'
 import {useNavigate} from 'react-router-dom'
+import {ROOT_URL} from '../Urls/index';
+import axios from 'axios';
+
 export default function DnsRecordDashboard() {
+  const [domainName,setDomainName] = useState('');
+  const [records,setrecords] = useState([]);
   const navigate = useNavigate();
   const handleNavigateion = ()=>{
     navigate('/')
   }
+
+  useEffect(() => {
+  const currentUrl = window.location.href;
+
+  // Create a URL object to extract parameters
+  const url = new URL(currentUrl);
+
+  // Extract parameters from the URL
+  const params = new URLSearchParams(url.search);
+   setDomainName(params.get('domainName')); // "tex.nt"
+  let hostedId = params.get('hostedId');
+   // "Z03275771W0GD8QIGGL5F"
+   const fetchData = async () => {
+    try {
+     
+      const postUrl = `${ROOT_URL}/dns/getRecords?zoneId=${hostedId}`;
+      const response = await axios.get(postUrl);
+      console.log(response.data);
+      setrecords(response.data)
+    } catch (error) {
+      console.error('Error:', error);
+      // Handle error here, if needed
+    }
+  };
+  fetchData();
+
+}, []);
   return (
    <MyDNsDashboard>
     <div className=' w-full border'>
     <div className='px-4 shaodw-xl'>
       <p className='font-medium text-green-600'>Dns Record For:</p>
-      <p className='font-semibod text-3xl '>example.com</p>
+      <p className='font-semibod text-3xl '>{domainName}</p>
     </div>
     </div>
     <div className='py-4 mydashboard'>
@@ -22,8 +54,6 @@ export default function DnsRecordDashboard() {
           <thead>
            <tr>
             <th className='border border-slate-600'>Type</th>
-            <th className='border border-slate-600'>Hostname</th>
-            <th className='border border-slate-600'>Content</th>
             <th className='border border-slate-600'>TTL</th>
             <th className='border border-slate-600'>Action</th>
 
@@ -53,13 +83,7 @@ export default function DnsRecordDashboard() {
 
 
            
-            <td className='text-center border border-slate-700'>
-              <input type='text' className='w-full h-full py-4 px-1  appearance-none focus:outline-none' placeholder='@hostname'/>
-              </td>
-            <td className='text-center border border-slate-700'>
-                            <input type='text' className='w-full h-full py-4 px-1  appearance-none focus:outline-none' placeholder='0.0.0.0'/>
-
-            </td>
+           
             <td className='text-center border border-slate-700'>
             <input type='text' className='w-full h-full py-4 px-1  appearance-none focus:outline-none' placeholder='0.0.0.0'/>
 
@@ -77,20 +101,29 @@ export default function DnsRecordDashboard() {
           <thead>
            <tr>
             <th className='border border-slate-600'>Type</th>
-            <th className='border border-slate-600'>Hostname</th>
-            <th className='border border-slate-600'>Content</th>
             <th className='border border-slate-600'>TTL</th>
-            <th className='border border-slate-600'>Action</th>
+            <th className='border border-slate-600'>NameServers</th>
 
             
            </tr>
            </thead>
            <tbody>
-           <td className='text-center border border-slate-700'>example</td>
-            <td className='text-center border border-slate-700'>example</td>
-            <td className='text-center border border-slate-700'>example</td>
-            <td className='text-center border border-slate-700'>example</td>
-            <td className='text-center border border-slate-700'>example</td>
+            {records.map((item,index) =>(
+           <tr>
+           <td className='text-center border border-slate-700'>{item.Type}</td>
+            <td className='text-center border border-slate-700'>{item.TTL}</td>
+            <td className='text-center border border-slate-700'>
+              {item.ResourceRecords.map((item,index)=>(
+               
+               <>
+                <p className='text-sm font-semibold'>{item.Value}</p>
+                <hr/>
+               </>
+                
+              ))}
+            </td>
+           </tr>
+          ) )}
            </tbody>
 
           </table>

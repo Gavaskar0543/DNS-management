@@ -14,8 +14,8 @@ export default function Dashboard() {
    const [startD,setStartD] = useState(false);
  const auth = useSelector((state) => state.auth);
   const navigate = useNavigate();
-  const handleNavigation = ()=>{
-    navigate('/dnsrecord')
+  const handleNavigation = (name,id)=>{
+    navigate(`/dnsrecord?domainName=${name}&hostedId=${id}`)
   }
  
   useEffect(() => {
@@ -135,7 +135,7 @@ setcreating(true)
           <tbody>
        {domains.map((item,index) =>(  
     <tr key={index} >
-      <td onClick={handleNavigation} className='text-center border border-slate-700 underline text-blue-800 font-medium cursor-pointer'>{item.domainName}</td>
+      <td onClick={()=>{handleNavigation(item.domainName,item.hostedZoneId)}} className='text-center border border-slate-700 underline text-blue-800 font-medium cursor-pointer'>{item.domainName}</td>
       <td className='text-center border border-slate-700'>{item.domainInfo.ChangeInfo.Status}</td>
        
                 <td onClick={()=>{handleDelete(item.hostedZoneId)}} className='text-center border border-slate-700 text-red-600 font-semibold'><p className='cursor-pointer text-sm'>Remove</p></td>
