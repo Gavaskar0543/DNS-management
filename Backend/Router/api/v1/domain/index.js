@@ -6,9 +6,8 @@ const domainController = require('../../../../Controller/Api/V1/DomainController
 /**get all domains for matching userid */
 router.post('/getdomainsbyid',domainController.getDomainsByIds);
 /* create Hosted Zones */
-router.post('/createHostedZone',passport.authenticate('jwt', {session: false}),domainapi.createHostedZone);
-/**listedZones */
-router.get('/getRecords',domainapi.getRecords);
+router.post('/createHostedZone',domainapi.createHostedZone);
+
 /**delete hostedzone */
 router.delete('/deleteHostedZone',domainapi.deleteHostedZone);
 

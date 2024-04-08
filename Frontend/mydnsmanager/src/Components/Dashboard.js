@@ -33,7 +33,7 @@ export default function Dashboard() {
       }
     };
     fetchData();
-   }, [domainName]);
+   }, [domainName,startD]);
   
    
 
@@ -67,25 +67,22 @@ setcreating(true)
 
    }
    const handleDelete = async (id) =>{
-   setStartD(true);
-   return;
+  setStartD(true)
     try {
-      const data = {
-      
-      id:id
-      };
-      const postUrl = `${ROOT_URL}/domain/deleteHostedZone`;
-      const response = await axios.delete(postUrl, data, {
+   
+      const postUrl = `${ROOT_URL}/domain/deleteHostedZone?hostedZoneId=${id}`;
+      const response = await axios.delete(postUrl, {
         headers: {
           'Authorization': `Bearer ${auth.authToken}`
         }});
        success("Domain deleted")
-       setcreating(false);
-       setdomainName('');
+       setStartD(false)
+
     } catch (err) {
       console.error('Error:', err);
       error("Something went wrong")
-      setcreating(false);
+      setStartD(false);
+      
       // Handle error here, if needed
     }
    }
@@ -140,13 +137,10 @@ setcreating(true)
     <tr key={index} >
       <td onClick={handleNavigation} className='text-center border border-slate-700 underline text-blue-800 font-medium cursor-pointer'>{item.domainName}</td>
       <td className='text-center border border-slate-700'>{item.domainInfo.ChangeInfo.Status}</td>
-        {startD ? (
-                <td  className='text-center border border-slate-700 text-red-600 font-semibold'><p className='cursor-pointer text-sm'>Deleteing...</p></td>
+       
+                <td onClick={()=>{handleDelete(item.hostedZoneId)}} className='text-center border border-slate-700 text-red-600 font-semibold'><p className='cursor-pointer text-sm'>Remove</p></td>
 
-        ):(
-                <td onClick={()=>{handleDelete(item._id)}} className='text-center border border-slate-700 text-red-600 font-semibold'><p className='cursor-pointer text-sm'>Remove</p></td>
-
-        )}
+     
     </tr>
   ))} 
 

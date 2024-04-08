@@ -16,13 +16,4 @@ module.exports.getDomainsByIds = async (req,res) => {
     }
   };
 
-  module.exports.deleteById =async (id) => {
-    try {
-      // Use the findByIds method to find domains by IDs
-      const domains = await Domain.find({_id :id} );
-      return true;
-
-    } catch (error) {
-     return false
-    }
-  };
+ 
