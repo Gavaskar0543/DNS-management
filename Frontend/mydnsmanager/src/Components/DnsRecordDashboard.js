@@ -3,10 +3,16 @@ import styled from 'styled-components'
 import {useNavigate} from 'react-router-dom'
 import {ROOT_URL} from '../Urls/index';
 import axios from 'axios';
+import { error, success } from '../Config/toastify';
 
 export default function DnsRecordDashboard() {
   const [domainName,setDomainName] = useState('');
   const [records,setrecords] = useState([]);
+  const [ttl,setttl] = useState('');
+  const [type ,settype] = useState('');
+  const [nameserver,setnameserver]  = useState('');
+  const [creating,setcreating] = useState(false);
+  const [hostedid,setHostedId] = useState('');
   const navigate = useNavigate();
   const handleNavigateion = ()=>{
     navigate('/')
@@ -22,6 +28,7 @@ export default function DnsRecordDashboard() {
   const params = new URLSearchParams(url.search);
    setDomainName(params.get('domainName')); // "tex.nt"
   let hostedId = params.get('hostedId');
+  setHostedId(hostedId);
    // "Z03275771W0GD8QIGGL5F"
    const fetchData = async () => {
     try {
@@ -37,7 +44,31 @@ export default function DnsRecordDashboard() {
   };
   fetchData();
 
-}, []);
+}, [creating]);
+
+const handleFormSubmit = async (e)=>{
+  e.preventDefault();
+  setcreating(true)
+  let data = {
+    type:type,
+    ttl:ttl,
+    value:nameserver,
+    name:domainName
+  }
+
+  try {
+     
+    const postUrl = `${ROOT_URL}/dns/updateDNSRecords?hostedZoneId=${hostedid}`;
+    const response = await axios.put(postUrl,data);
+    console.log(response.data);
+    success('New Record added')
+    setcreating(false);
+  } catch (err) {
+    error('Something went wrong');
+    setcreating(false);
+    // Handle error here, if needed
+  }
+}
   return (
    <MyDNsDashboard>
     <div className=' w-full border'>
@@ -49,12 +80,14 @@ export default function DnsRecordDashboard() {
     <div className='py-4 mydashboard'>
       <div className='px-2 w-full border mb-3  '>
         <p className='text-xl font-semibold drop-shadow-md'>Add DNS Record</p>
-        <form>
+        <form onSubmit={handleFormSubmit}>
         <table className='mt-2 w-full table-auto border-collapse  border border-slate-500'>
           <thead>
            <tr>
             <th className='border border-slate-600'>Type</th>
             <th className='border border-slate-600'>TTL</th>
+            <th className='border border-slate-600'>NameServer</th>
+
             <th className='border border-slate-600'>Action</th>
 
             
@@ -65,7 +98,10 @@ export default function DnsRecordDashboard() {
           
         
            <td class=" w-32">
-  <select style={{width:'200px'}} class="  appearance-none bg-white border border-gray-300 hover:border-gray-500 px-4 py-4 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline">
+  <select style={{width:'200px'}}
+  value={type}
+  onChange={(e)=>settype(e.target.value)}
+  class="  appearance-none bg-white border border-gray-300 hover:border-gray-500 px-4 py-4 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline">
     <option value="" disabled selected>Select a DNS Record Type</option>
     <option value="A">A (Address) Record</option>
     <option value="AAAA">AAAA (IPv6 Address) Record</option>
@@ -85,10 +121,27 @@ export default function DnsRecordDashboard() {
            
            
             <td className='text-center border border-slate-700'>
-            <input type='text' className='w-full h-full py-4 px-1  appearance-none focus:outline-none' placeholder='0.0.0.0'/>
+            <input type='text' className='w-full h-full py-4 px-1  appearance-none focus:outline-none'
+             value={ttl}
+             onChange={(e) => setttl(e.target.value)}
+            placeholder='0.0.0.0'/>
 
             </td>
-            <td className='text-center border border-slate-700 py-2'><button className='text-md rounded bg-green-400 hover:bg-green-800 text-white font-medium px-2 py-2'> Add Record</button></td>
+            <td className='text-center border border-slate-700'>
+            <input type='text' className='w-full h-full py-4 px-1  appearance-none focus:outline-none'
+            value={nameserver}
+            onChange={(e) => setnameserver(e.target.value)}
+            placeholder='.ns.net'/>
+
+            </td>
+            <td className='text-center border border-slate-700 py-2'>
+              {creating ? (
+                              <button className='text-sm rounded bg-green-400 hover:bg-green-800 text-white font-medium px-2 py-2'> Adding Record</button>
+              ): (
+                              <button type='submit' className='text-md rounded bg-green-400 hover:bg-green-800 text-white font-medium px-2 py-2'> Add Record</button>
+
+              )}
+              </td>
            </tbody>
 
           </table>
