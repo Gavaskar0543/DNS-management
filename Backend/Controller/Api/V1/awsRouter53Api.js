@@ -29,10 +29,12 @@ module.exports.createHostedZone = async (req, res) => {
       userId: userId,
       domainName: name,
       hostedZoneId: hostedZoneId,
+      domainInfo:data
     });
     await domain.save();
 
-    res.status(201).json({ message: 'Hosted zone created and domain info stored' });
+    res.status(201).json({ message: 'Hosted zone created and domain info stored' ,
+  data:data});
   } catch (error) {
     console.error('Error creating hosted zone:', error);
     res.status(500).json({ error: 'Failed to create hosted zone and store domain info' });

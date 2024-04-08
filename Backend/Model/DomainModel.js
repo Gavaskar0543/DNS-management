@@ -12,6 +12,9 @@ const domainSchema = new mongoose.Schema({
     hostedZoneId:{
         type:String,
         required:true
+    },
+    domainInfo:{
+        type:Object,
     }
 },{
     timestamps:true
