@@ -4,8 +4,10 @@ import { useNavigate } from 'react-router-dom'
 import { ROOT_URL } from '../../Urls';
 import {success,error} from '../../Config/toastify'
 import { useDispatch,useSelector } from "react-redux";
-import { setUser,setAuthtoken } from '../../Redux/Reducer/authSlice';
+import { setUser,setAuthtoken, setUserID } from '../../Redux/Reducer/authSlice';
 import axios from 'axios'
+import {jwtDecode} from 'jwt-decode';
+
 export default function SigninComponent() {
     const [email,setemail] = useState('');
     const [password,setpassword] = useState('');
@@ -32,8 +34,13 @@ export default function SigninComponent() {
           await  axios.post(postUrl, data)
             .then(response => {
               success('Authentication Successfull!');
+              dispatch(setUser)
+              dispatch(setAuthtoken(response.data.data.token))
+              const decodedToken = jwtDecode(response.data.data.token);
+              const userId = decodedToken._id;
+              dispatch(setUserID(userId));
+              console.log(userId)
               navigate('/Home');
-              console.log(response.data.data.token);
             })
             .catch(err => {
                 setcreating(false);
@@ -79,8 +86,13 @@ export default function SigninComponent() {
             </div>
            
             <div className='mt-3 mb-3'>
-               <button type='submit' className='rounded shadow-xl text-white bg-green-600 px-2 py-2 text-xl font-semibold hover:bg-green-800 w-64'>Login</button>
+                     {creating ? (
+                                       <button disabled className='rounded shadow-xl text-white bg-green-600 px-2 py-2 text-xl font-semibold hover:bg-green-800 w-64'>loging in</button>
 
+                     ):(
+                                       <button type='submit' className='rounded shadow-xl text-white bg-green-600 px-2 py-2 text-xl font-semibold hover:bg-green-800 w-64'>Login</button>
+
+                     )}
             </div>
                
                

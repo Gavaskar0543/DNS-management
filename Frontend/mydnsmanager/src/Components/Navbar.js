@@ -1,11 +1,20 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { IoIosGlobe } from "react-icons/io";
+import { IoLogOut } from "react-icons/io5";
+import { logout, setUser } from '../Redux/Reducer/authSlice';
+import { useDispatch } from 'react-redux';
 
 export default function Navbar() {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const handleNavigate = ()=>{
         navigate('/Home');
+    }
+
+ const handlelogout = () =>{
+    navigate('/signin')
+dispatch(logout());
     }
   return (
     <dvi className="rounded drop-shadow-xl px-2 py-2 bg-green-300 flex justify-between items-center">
@@ -21,8 +30,10 @@ export default function Navbar() {
         </div>
         <div>
             <ul  className=' w-32 flex justify-between'>
-                <li>username</li>
-                <li>logout</li>
+                
+                <li>
+                    <p  className='cursor-pointer text-2xl font-semibold' onClick={handlelogout}><IoLogOut/></p>
+                </li>
             </ul>
         </div>
 

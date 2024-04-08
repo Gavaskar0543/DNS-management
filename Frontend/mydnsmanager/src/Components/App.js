@@ -3,7 +3,11 @@ import SigninComponent from "./AuthComponents/SigninComponent";
 import SignupComponent from "./AuthComponents/SignupComponent";
 import { createBrowserRouter,RouterProvider } from "react-router-dom";
 import DnsRecordDashboard from "./DnsRecordDashboard";
+import { UseSelector,useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import ProtectedRoute from "./ProtectedRoute";
 function App() {
+ 
   const router = createBrowserRouter([{
     path:'/',
     element:<SignupComponent/>
