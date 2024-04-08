@@ -25,7 +25,6 @@ export default function DnsRecordDashboard() {
             <th className='border border-slate-600'>Hostname</th>
             <th className='border border-slate-600'>Content</th>
             <th className='border border-slate-600'>TTL</th>
-            <th className='border border-slate-600'>Proxy Status</th>
             <th className='border border-slate-600'>Action</th>
 
             
@@ -33,11 +32,38 @@ export default function DnsRecordDashboard() {
            
            </thead>
            <tbody>
-           <td className='text-center border border-slate-700'>example</td>
-            <td className='text-center border border-slate-700'><input type='text' className='w-full h-full py-4 px-1 appearance-none' placeholder='@hostname'/></td>
-            <td className='text-center border border-slate-700'>example</td>
-            <td className='text-center border border-slate-700'>example</td>
-            <td className='text-center border border-slate-700'>example</td>
+          
+        
+           <td class=" w-32">
+  <select style={{width:'200px'}} class="  appearance-none bg-white border border-gray-300 hover:border-gray-500 px-4 py-4 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline">
+    <option value="" disabled selected>Select a DNS Record Type</option>
+    <option value="A">A (Address) Record</option>
+    <option value="AAAA">AAAA (IPv6 Address) Record</option>
+    <option value="CNAME">CNAME (Canonical Name) Record</option>
+    <option value="MX">MX (Mail Exchange) Record</option>
+    <option value="NS">NS (Name Server) Record</option>
+    <option value="PTR">PTR (Pointer) Record</option>
+    <option value="SOA">SOA (Start of Authority) Record</option>
+    <option value="SRV">SRV (Service) Record</option>
+    <option value="TXT">TXT (Text) Record</option>
+    <option value="DNSSEC">DNSSEC</option>
+  </select>
+ 
+</td>
+
+
+           
+            <td className='text-center border border-slate-700'>
+              <input type='text' className='w-full h-full py-4 px-1  appearance-none focus:outline-none' placeholder='@hostname'/>
+              </td>
+            <td className='text-center border border-slate-700'>
+                            <input type='text' className='w-full h-full py-4 px-1  appearance-none focus:outline-none' placeholder='0.0.0.0'/>
+
+            </td>
+            <td className='text-center border border-slate-700'>
+            <input type='text' className='w-full h-full py-4 px-1  appearance-none focus:outline-none' placeholder='0.0.0.0'/>
+
+            </td>
             <td className='text-center border border-slate-700 py-2'><button className='text-md rounded bg-green-400 hover:bg-green-800 text-white font-medium px-2 py-2'> Add Record</button></td>
            </tbody>
 
@@ -54,7 +80,6 @@ export default function DnsRecordDashboard() {
             <th className='border border-slate-600'>Hostname</th>
             <th className='border border-slate-600'>Content</th>
             <th className='border border-slate-600'>TTL</th>
-            <th className='border border-slate-600'>Proxy  Status</th>
             <th className='border border-slate-600'>Action</th>
 
             
@@ -62,7 +87,6 @@ export default function DnsRecordDashboard() {
            </thead>
            <tbody>
            <td className='text-center border border-slate-700'>example</td>
-            <td className='text-center border border-slate-700'>example</td>
             <td className='text-center border border-slate-700'>example</td>
             <td className='text-center border border-slate-700'>example</td>
             <td className='text-center border border-slate-700'>example</td>
