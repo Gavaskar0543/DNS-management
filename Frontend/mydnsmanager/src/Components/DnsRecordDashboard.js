@@ -3,7 +3,9 @@ import styled from 'styled-components'
 import {useNavigate} from 'react-router-dom'
 import {ROOT_URL} from '../Urls/index';
 import axios from 'axios';
-import { error, success } from '../Config/toastify';
+import { error, success, warning } from '../Config/toastify';
+import { MdOutlineDeleteForever } from "react-icons/md";
+import {FaPencilAlt } from 'react-icons/fa'
 
 export default function DnsRecordDashboard() {
   const [domainName,setDomainName] = useState('');
@@ -13,10 +15,15 @@ export default function DnsRecordDashboard() {
   const [nameserver,setnameserver]  = useState('');
   const [creating,setcreating] = useState(false);
   const [hostedid,setHostedId] = useState('');
+  const [isdelete,setDelete] = useState(false);
   const navigate = useNavigate();
   const handleNavigateion = ()=>{
     navigate('/')
   }
+
+
+
+
 
   useEffect(() => {
   const currentUrl = window.location.href;
@@ -44,7 +51,7 @@ export default function DnsRecordDashboard() {
   };
   fetchData();
 
-}, [creating]);
+}, [creating,isdelete]);
 
 const handleFormSubmit = async (e)=>{
   e.preventDefault();
@@ -69,6 +76,29 @@ const handleFormSubmit = async (e)=>{
     // Handle error here, if needed
   }
 }
+
+const handleDelteByType = async (item)=>{
+  try {
+
+    if(item.Type === 'SOA'){
+      warning('A HostedZone must contain exactly one SOA record');
+      return;
+    }
+   setDelete(true);
+     
+    const postUrl = `${ROOT_URL}/dns/deleterecord?domainName=${domainName}&recordType=${item.Type}&hostedZoneId=${hostedid}&ttl=${item.TTL}&resourceValue=${item.ResourceRecords[0].Value}`;
+    const response = await axios.delete(postUrl);
+    success('Record removed');
+    setDelete(false)
+    
+  } catch (err) {
+    error("something went wrong")
+    setDelete(false)
+    console.error('Error:', error);
+    // Handle error here, if needed
+  }
+}
+
   return (
    <MyDNsDashboard>
     <div className=' w-full border'>
@@ -78,7 +108,7 @@ const handleFormSubmit = async (e)=>{
     </div>
     </div>
     <div className='py-4 mydashboard'>
-      <div className='px-2 w-full border mb-3  '>
+      <div className='px-2 w-full border mb-3 rounded-lg bg-green-200 shadow-md py-2   '>
         <p className='text-xl font-semibold drop-shadow-md'>Add DNS Record</p>
         <form onSubmit={handleFormSubmit}>
         <table className='mt-2 w-full table-auto border-collapse  border border-slate-500'>
@@ -147,15 +177,17 @@ const handleFormSubmit = async (e)=>{
           </table>
         </form>
       </div>
-      <div className='px-2 w-full border '>
+      <div className='px-2 w-full border bg-blue-200 rounded-lg shaodw-xl py-4 '>
         <p className='text-xl font-semibold drop-shadow-md'>DNS Record</p>
        
-        <table className='mt-2 w-full table-auto border-collapse  border border-slate-500'>
+        <table className='mt-2 w-full table-auto border-collapse  border   border-slate-500'>
           <thead>
            <tr>
-            <th className='border border-slate-600'>Type</th>
+            <th className='border  border-slate-600'>Type</th>
             <th className='border border-slate-600'>TTL</th>
             <th className='border border-slate-600'>NameServers</th>
+            <th className='border border-slate-600'>Action</th>
+
 
             
            </tr>
@@ -174,6 +206,11 @@ const handleFormSubmit = async (e)=>{
                </>
                 
               ))}
+            </td>
+            <td className='border border-slate-700 flex w-full justify-around items-center '>
+            <i  className=' px-2 py-2 font-semibold text-xl text-blue-800 cursor-pointer' title='update dns record'><FaPencilAlt /></i>
+              <i onClick={()=>{handleDelteByType(item)}} className=' px-2 py-2 font-semibold text-xl text-red-800 cursor-pointer' title='remove from dns record'><MdOutlineDeleteForever/></i>
+              
             </td>
            </tr>
           ) )}
@@ -205,7 +242,7 @@ align-items:center;
     width:94vw;
     height:80vh;
     backgound:white;
-    border:1px solid red;
+   
     margin-top:5vh;
 }
 

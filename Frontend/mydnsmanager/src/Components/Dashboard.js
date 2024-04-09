@@ -123,7 +123,7 @@ setcreating(true)
 
       </div>
 
-      <div className='mt-2'>
+      <div className='mt-2 px-2 py-3 border rounded-lg shadow-xl bg-red-200'>
         <table className='mt-2 w-full table-auto border-collapse  border border-slate-500'>
           <thead>
            <tr>
@@ -168,7 +168,7 @@ align-item:center;
     width:94vw;
     height:80vh;
     backgound:white;
-    border:1px solid red;
+   
     margin-top:5vh;
 }
 
