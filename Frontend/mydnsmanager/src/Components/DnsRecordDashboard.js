@@ -20,6 +20,25 @@ export default function DnsRecordDashboard() {
     navigate('/')
   }
 
+
+
+  const handleDelteByType = async (item)=>{
+    try {
+      let data = {
+        hostedZoneId :hostedid
+      }
+       
+      const postUrl = `${ROOT_URL}/dns/deleterecord?domainName=${domainName}&recordType=${item.Type}&hostedZoneId=${hostedid}&ttl=${item.TTL}&resourceValue=${item.ResourceRecords[0].Value}`;
+      const response = await axios.delete(postUrl);
+      success('Record removed')
+      
+    } catch (err) {
+      error("something went wrong")
+      console.error('Error:', error);
+      // Handle error here, if needed
+    }
+  }
+
   useEffect(() => {
   const currentUrl = window.location.href;
 
@@ -46,7 +65,7 @@ export default function DnsRecordDashboard() {
   };
   fetchData();
 
-}, [creating]);
+}, [creating,handleDelteByType]);
 
 const handleFormSubmit = async (e)=>{
   e.preventDefault();
@@ -71,6 +90,7 @@ const handleFormSubmit = async (e)=>{
     // Handle error here, if needed
   }
 }
+
   return (
    <MyDNsDashboard>
     <div className=' w-full border'>
@@ -180,8 +200,8 @@ const handleFormSubmit = async (e)=>{
               ))}
             </td>
             <td className='border border-slate-700 flex w-full justify-around items-center '>
-            <i className=' px-2 py-2 font-semibold text-xl text-blue-800 cursor-pointer' title='update dns record'><FaPencilAlt /></i>
-              <i className=' px-2 py-2 font-semibold text-xl text-red-800 cursor-pointer' title='remove from dns record'><MdOutlineDeleteForever/></i>
+            <i  className=' px-2 py-2 font-semibold text-xl text-blue-800 cursor-pointer' title='update dns record'><FaPencilAlt /></i>
+              <i onClick={()=>{handleDelteByType(item)}} className=' px-2 py-2 font-semibold text-xl text-red-800 cursor-pointer' title='remove from dns record'><MdOutlineDeleteForever/></i>
               
             </td>
            </tr>
