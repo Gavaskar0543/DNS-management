@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import {useNavigate} from 'react-router-dom'
 import {ROOT_URL} from '../Urls/index';
 import axios from 'axios';
-import { error, success } from '../Config/toastify';
+import { error, success, warning } from '../Config/toastify';
 import { MdOutlineDeleteForever } from "react-icons/md";
 import {FaPencilAlt } from 'react-icons/fa'
 
@@ -15,6 +15,7 @@ export default function DnsRecordDashboard() {
   const [nameserver,setnameserver]  = useState('');
   const [creating,setcreating] = useState(false);
   const [hostedid,setHostedId] = useState('');
+  const [isdelete,setDelete] = useState(false);
   const navigate = useNavigate();
   const handleNavigateion = ()=>{
     navigate('/')
@@ -22,22 +23,7 @@ export default function DnsRecordDashboard() {
 
 
 
-  const handleDelteByType = async (item)=>{
-    try {
-      let data = {
-        hostedZoneId :hostedid
-      }
-       
-      const postUrl = `${ROOT_URL}/dns/deleterecord?domainName=${domainName}&recordType=${item.Type}&hostedZoneId=${hostedid}&ttl=${item.TTL}&resourceValue=${item.ResourceRecords[0].Value}`;
-      const response = await axios.delete(postUrl);
-      success('Record removed')
-      
-    } catch (err) {
-      error("something went wrong")
-      console.error('Error:', error);
-      // Handle error here, if needed
-    }
-  }
+
 
   useEffect(() => {
   const currentUrl = window.location.href;
@@ -65,7 +51,7 @@ export default function DnsRecordDashboard() {
   };
   fetchData();
 
-}, [creating,handleDelteByType]);
+}, [creating,isdelete]);
 
 const handleFormSubmit = async (e)=>{
   e.preventDefault();
@@ -87,6 +73,28 @@ const handleFormSubmit = async (e)=>{
   } catch (err) {
     error('Something went wrong');
     setcreating(false);
+    // Handle error here, if needed
+  }
+}
+
+const handleDelteByType = async (item)=>{
+  try {
+
+    if(item.Type === 'SOA'){
+      warning('A HostedZone must contain exactly one SOA record');
+      return;
+    }
+   setDelete(true);
+     
+    const postUrl = `${ROOT_URL}/dns/deleterecord?domainName=${domainName}&recordType=${item.Type}&hostedZoneId=${hostedid}&ttl=${item.TTL}&resourceValue=${item.ResourceRecords[0].Value}`;
+    const response = await axios.delete(postUrl);
+    success('Record removed');
+    setDelete(false)
+    
+  } catch (err) {
+    error("something went wrong")
+    setDelete(false)
+    console.error('Error:', error);
     // Handle error here, if needed
   }
 }
