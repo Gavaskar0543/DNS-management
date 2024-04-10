@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import Modal from 'react-modal';
+import { success,error } from '../Config/toastify';
+import axios  from 'axios';
+import { ROOT_URL } from '../Urls';
 
-function DeleteModal({ isOpen, closeModal, item, setconfirm,setmydnsrecord ,mydnsrecord}) {
+function DeleteModal({ isOpen, closeModal,domainName,hostedid, item,setmydnsrecord ,mydnsrecord}) {
  const [selectedItem,setSelectedItem] = useState(null);
 
   const handleRadioChange = (index,record) => {
@@ -9,10 +12,27 @@ function DeleteModal({ isOpen, closeModal, item, setconfirm,setmydnsrecord ,mydn
     setmydnsrecord(record.Value)
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (selectedItem !== null) {
-        setconfirm(true)
-      closeModal();
+        closeModal();
+            success("Deletion Process Started")
+            try {
+              const postUrl = `${ROOT_URL}/dns/delterecordmany?domainName=${domainName}&recordType=${item.Type}&hostedZoneId=${hostedid}&ttl=${item.TTL}&resourceValue=${mydnsrecord.trim()}`;
+              const response = await axios.delete(postUrl);
+              success('Record removed');
+              setmydnsrecord(null)
+               
+              
+            } catch (err) {
+              error("something went wrong")
+              
+              console.error('Error:', error);
+              // Handle error here, if needed
+            
+          
+             }
+          
+      
     } else {
       // Optionally, provide feedback to the user if no item is selected
       alert('Please select a record before confirming.');

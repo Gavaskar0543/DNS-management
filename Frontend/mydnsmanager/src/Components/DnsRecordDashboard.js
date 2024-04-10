@@ -21,8 +21,7 @@ export default function DnsRecordDashboard() {
   const [isdelete,setDelete] = useState(false);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [modalItem,setModalItem] = useState('');
-  const [mydnsrecord,setmydnsrecord] = useState('');
-  const [confirm,setconfirm] = useState(false);
+  const [mydnsrecord,setmydnsrecord] = useState(null);
 
   const navigate = useNavigate();
   const handleNavigateion = ()=>{
@@ -59,7 +58,7 @@ export default function DnsRecordDashboard() {
   };
   fetchData();
 
-}, [creating,isdelete]);
+}, [creating,isdelete,mydnsrecord]);
 
 const handleFormSubmit = async (e)=>{
   e.preventDefault();
@@ -97,20 +96,21 @@ const handleDelteByType = async (item)=>{
       return;
     }
 
-   setmydnsrecord(item.ResourceRecords[0].Value);
+
 
     if(item.ResourceRecords.length > 1){
-      setModalItem(item);
-      setModalIsOpen(true);
+     handlearrayofRecords(item);
+    return;
     }
+    setmydnsrecord(item.ResourceRecords[0].Value);
    setDelete(true);
-   if(confirm){
+  
    try {
     const postUrl = `${ROOT_URL}/dns/deleterecord?domainName=${domainName}&recordType=${item.Type}&hostedZoneId=${hostedid}&ttl=${item.TTL}&resourceValue=${mydnsrecord}`;
     const response = await axios.delete(postUrl);
     success('Record removed');
     setDelete(false)
-    setconfirm(false)
+    setmydnsrecord(null)
      
     
   } catch (err) {
@@ -120,14 +120,20 @@ const handleDelteByType = async (item)=>{
     // Handle error here, if needed
   
 
-}
    }
   
 }
 
+const handlearrayofRecords = async (item) =>{
+  setModalItem(item);
+  setModalIsOpen(true);
+
+}
+
+
   return (
    <MyDNsDashboard>
-        <DeleteModal isOpen={modalIsOpen} setConfirm={setconfirm} closeModal={closeModal} item={modalItem} setmydnsrecord={setmydnsrecord} mydnsrecord={mydnsrecord}/> 
+        <DeleteModal isOpen={modalIsOpen} domainName={domainName} hostedid={hostedid}  closeModal={closeModal} item={modalItem} setmydnsrecord={setmydnsrecord} mydnsrecord={mydnsrecord}/> 
 
     <div className=' w-full border'>
     <div className='px-4 shaodw-xl'>

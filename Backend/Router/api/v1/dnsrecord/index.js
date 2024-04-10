@@ -4,4 +4,5 @@ const dnsController = require('../../../../Controller/Api/V1/DNSRecordController
 router.get('/getRecords',dnsController.getRecords)
 router.put('/updateDNSRecords',dnsController.updateDNSRecords);
 router.delete('/deleterecord',dnsController.deltednsRecord);
+router.delete('delterecordmany',dnsController.deltednsRecordInArray)
 module.exports = router;
