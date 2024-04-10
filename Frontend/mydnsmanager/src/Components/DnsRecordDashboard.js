@@ -1,4 +1,6 @@
 import React,{useEffect,useState} from 'react'
+import Modal from 'react-modal';
+
 import styled from 'styled-components'
 import {useNavigate} from 'react-router-dom'
 import {ROOT_URL} from '../Urls/index';
@@ -6,6 +8,7 @@ import axios from 'axios';
 import { error, success, warning } from '../Config/toastify';
 import { MdOutlineDeleteForever } from "react-icons/md";
 import {FaPencilAlt } from 'react-icons/fa'
+import DeleteModal from './DeleteModal';
 
 export default function DnsRecordDashboard() {
   const [domainName,setDomainName] = useState('');
@@ -16,6 +19,11 @@ export default function DnsRecordDashboard() {
   const [creating,setcreating] = useState(false);
   const [hostedid,setHostedId] = useState('');
   const [isdelete,setDelete] = useState(false);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [modalItem,setModalItem] = useState('');
+  const [mydnsrecord,setmydnsrecord] = useState('');
+  const [confirm,setconfirm] = useState(false);
+
   const navigate = useNavigate();
   const handleNavigateion = ()=>{
     navigate('/')
@@ -77,30 +85,50 @@ const handleFormSubmit = async (e)=>{
   }
 }
 
+const closeModal = () => {
+  setModalIsOpen(false);
+};
+
 const handleDelteByType = async (item)=>{
-  try {
+
 
     if(item.Type === 'SOA'){
       warning('A HostedZone must contain exactly one SOA record');
       return;
     }
+
+   setmydnsrecord(item.ResourceRecords[0].Value);
+
+    if(item.ResourceRecords.length > 1){
+      setModalItem(item);
+      setModalIsOpen(true);
+    }
    setDelete(true);
-     
-    const postUrl = `${ROOT_URL}/dns/deleterecord?domainName=${domainName}&recordType=${item.Type}&hostedZoneId=${hostedid}&ttl=${item.TTL}&resourceValue=${item.ResourceRecords[0].Value}`;
+   if(confirm){
+   try {
+    const postUrl = `${ROOT_URL}/dns/deleterecord?domainName=${domainName}&recordType=${item.Type}&hostedZoneId=${hostedid}&ttl=${item.TTL}&resourceValue=${mydnsrecord}`;
     const response = await axios.delete(postUrl);
     success('Record removed');
     setDelete(false)
+    setconfirm(false)
+     
     
   } catch (err) {
     error("something went wrong")
     setDelete(false)
     console.error('Error:', error);
     // Handle error here, if needed
-  }
+  
+
+}
+   }
+  
 }
 
   return (
    <MyDNsDashboard>
+        <DeleteModal isOpen={modalIsOpen} setConfirm={setconfirm} closeModal={closeModal} item={modalItem} setmydnsrecord={setmydnsrecord} mydnsrecord={mydnsrecord}/> 
+
     <div className=' w-full border'>
     <div className='px-4 shaodw-xl'>
       <p className='font-medium text-green-600'>Dns Record For:</p>
@@ -172,6 +200,7 @@ const handleDelteByType = async (item)=>{
 
               )}
               </td>
+             
            </tbody>
 
           </table>
@@ -203,6 +232,7 @@ const handleDelteByType = async (item)=>{
                <>
                 <p className='text-sm font-semibold'>{item.Value}</p>
                 <hr/>
+              
                </>
                 
               ))}
@@ -210,9 +240,11 @@ const handleDelteByType = async (item)=>{
             <td className='border border-slate-700 flex w-full justify-around items-center '>
             <i  className=' px-2 py-2 font-semibold text-xl text-blue-800 cursor-pointer' title='update dns record'><FaPencilAlt /></i>
               <i onClick={()=>{handleDelteByType(item)}} className=' px-2 py-2 font-semibold text-xl text-red-800 cursor-pointer' title='remove from dns record'><MdOutlineDeleteForever/></i>
-              
+            
             </td>
+           
            </tr>
+            
           ) )}
            </tbody>
 

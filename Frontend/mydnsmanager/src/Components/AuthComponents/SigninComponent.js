@@ -121,4 +121,11 @@ background:#77b852;
     background:white;
 }
 
+@media only screen and (max-width:670px){
+    .form{
+        width:70vw;
+        height:auto;
+    }
+}
+
 `
