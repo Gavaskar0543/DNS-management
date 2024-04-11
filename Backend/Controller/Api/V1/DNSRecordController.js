@@ -101,19 +101,36 @@ module.exports.deltednsRecord = async (req, res) => {
   }
 
 
- module.exports.deltednsRecordInArray =  async (req, res) => {
-    const { domainName, recordType, hostedZoneId, ttl } = req.query;
+ 
+  
 
-
-    const data = await route53.listResourceRecordSets({ HostedZoneId: hostedZoneId }).promise();
-   let newarr = [];
-   newarr.push(data)
+  module.exports.updateExistingDNSRecords = async (req, res) => {
+    try {
+     {hostedZoneId,name,type,TTL,resourceValue}
     
-    // Find the record to update
-   // const recordToUpdate = data.ResourceRecordSets.find(recordSet => recordSet.Name === domainName && recordSet.Type === recordType);
+      const params = {
+        HostedZoneId: hostedZoneId,
+        ChangeBatch: {
+          Changes: [
+            {
+              Action: 'UPSERT',
+              ResourceRecordSet: {
+                Name: name,
+                Type: type,
+                TTL: TTL,
+                ResourceRecords: [
+                  { Value: resourceValue }
+                ]
+              }
+            }
+          ]
+        }
+      };
     
-    
-   
-    
-  }
-
+      const data = await route53.changeResourceRecordSets(params).promise();
+      res.status(200).json({ message: 'DNS record updated successfully',data });
+    } catch (error) {
+      console.error('Error updating DNS record:', error);
+      res.status(500).json({ error: 'Failed to update DNS record' ,message:error.message});
+    }
+  };

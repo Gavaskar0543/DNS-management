@@ -130,7 +130,7 @@ setModalItem(item)
 
   return (
    <MyDNsDashboard>
-        <UpdateModal isOpen={modalIsOpen} hostedid={hostedid}  closeModal={closeModal} item={modalItem}/> 
+        <UpdateModal isOpen={modalIsOpen} hostedid={hostedid}  closeModal={closeModal} hostedId={hostedid} item={modalItem}/> 
 
     <div className=' w-full border'>
     <div className='px-4 shaodw-xl'>
@@ -189,7 +189,8 @@ setModalItem(item)
 
             </td>
             <td className='text-center border border-slate-700'>
-            <input type='text' className='w-full h-full py-4 px-1  appearance-none focus:outline-none'
+            <input type='text' 
+            className='w-full h-full py-4 px-1  appearance-none focus:outline-none'
             value={nameserver}
             onChange={(e) => setnameserver(e.target.value)}
             placeholder='.ns.net'/>
