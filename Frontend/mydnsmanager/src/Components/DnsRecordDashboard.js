@@ -100,11 +100,11 @@ const handleDelteByType = async (item)=>{
     warning('You have No-authorization to delete NameServers')
     return;
    }
-    setmydnsrecord(item.ResourceRecords[0].Value);
+    
    setDelete(true);
   
    try {
-    const postUrl = `${ROOT_URL}/dns/deleterecord?domainName=${domainName}&recordType=${item.Type}&hostedZoneId=${hostedid}&ttl=${item.TTL}&resourceValue=${mydnsrecord}`;
+    const postUrl = `${ROOT_URL}/dns/deleterecord?domainName=${domainName}&recordType=${item.Type}&hostedZoneId=${hostedid}&ttl=${item.TTL}&resourceValue=${item.ResourceRecords[0].Value}`;
     const response = await axios.delete(postUrl);
     success('Record removed');
     setDelete(false)
@@ -130,7 +130,7 @@ setModalItem(item)
 
   return (
    <MyDNsDashboard>
-        <UpdateModal isOpen={modalIsOpen} hostedid={hostedid}  closeModal={closeModal} hostedId={hostedid} item={modalItem}/> 
+        <UpdateModal isOpen={modalIsOpen} hostedid={hostedid} setDelete={setDelete} closeModal={closeModal} hostedId={hostedid} item={modalItem}/> 
 
     <div className=' w-full border'>
     <div className='px-4 shaodw-xl'>

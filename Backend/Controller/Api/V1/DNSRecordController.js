@@ -106,7 +106,10 @@ module.exports.deltednsRecord = async (req, res) => {
 
   module.exports.updateExistingDNSRecords = async (req, res) => {
     try {
-     {hostedZoneId,name,type,TTL,resourceValue}
+   
+    const {hostedZoneId,type,name,TTL,resourceValue} = req.body;
+    console.log(req.body)
+
     
       const params = {
         HostedZoneId: hostedZoneId,
