@@ -8,7 +8,7 @@ import axios from 'axios';
 import { error, success, warning } from '../Config/toastify';
 import { MdOutlineDeleteForever } from "react-icons/md";
 import {FaPencilAlt } from 'react-icons/fa'
-import DeleteModal from './DeleteModal';
+import UpdateModal from './UpdateModal';
 
 export default function DnsRecordDashboard() {
   const [domainName,setDomainName] = useState('');
@@ -96,12 +96,10 @@ const handleDelteByType = async (item)=>{
       return;
     }
 
-
-
-    if(item.ResourceRecords.length > 1){
-     handlearrayofRecords(item);
+   if(item.Type === 'NS'){
+    warning('You have No-authorization to delete NameServers')
     return;
-    }
+   }
     setmydnsrecord(item.ResourceRecords[0].Value);
    setDelete(true);
   
@@ -124,16 +122,15 @@ const handleDelteByType = async (item)=>{
   
 }
 
-const handlearrayofRecords = async (item) =>{
-  setModalItem(item);
-  setModalIsOpen(true);
 
+const handleEditByType =(item) =>{
+setModalIsOpen(true);
+setModalItem(item)
 }
-
 
   return (
    <MyDNsDashboard>
-        <DeleteModal isOpen={modalIsOpen} domainName={domainName} hostedid={hostedid}  closeModal={closeModal} item={modalItem} setmydnsrecord={setmydnsrecord} mydnsrecord={mydnsrecord}/> 
+        <UpdateModal isOpen={modalIsOpen} hostedid={hostedid}  closeModal={closeModal} item={modalItem}/> 
 
     <div className=' w-full border'>
     <div className='px-4 shaodw-xl'>
@@ -244,7 +241,7 @@ const handlearrayofRecords = async (item) =>{
               ))}
             </td>
             <td className='border border-slate-700 flex w-full justify-around items-center '>
-            <i  className=' px-2 py-2 font-semibold text-xl text-blue-800 cursor-pointer' title='update dns record'><FaPencilAlt /></i>
+            <i onClick={()=>{handleEditByType(item)}} className=' px-2 py-2 font-semibold text-xl text-blue-800 cursor-pointer' title='update dns record'><FaPencilAlt /></i>
               <i onClick={()=>{handleDelteByType(item)}} className=' px-2 py-2 font-semibold text-xl text-red-800 cursor-pointer' title='remove from dns record'><MdOutlineDeleteForever/></i>
             
             </td>

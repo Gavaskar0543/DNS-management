@@ -102,30 +102,18 @@ module.exports.deltednsRecord = async (req, res) => {
 
 
  module.exports.deltednsRecordInArray =  async (req, res) => {
-    const { domainName, recordType, hostedZoneId, ttl, resourceValues } = req.query;
+    const { domainName, recordType, hostedZoneId, ttl } = req.query;
 
-    try {
-        // If resourceValues is not an array, handle it as a single string
-        const changes = [{
-            Action: 'DELETE',
-            ResourceRecordSet: {
-                Name: domainName,
-                Type: recordType,
-                TTL: ttl ? parseInt(ttl) : undefined,
-                ResourceRecords: [{ Value: resourceValues }]
-            }
-        }];
 
-        const params = {
-            HostedZoneId: hostedZoneId,
-            ChangeBatch: { Changes: changes }
-        };
-
-        const data = await route53.changeResourceRecordSets(params).promise();
-        res.status(200).json({ message: `DNS records of type ${recordType} deleted successfully`, data });
-    } catch (error) {
-        console.error(`Error deleting DNS records of type ${recordType}:`, error);
-        res.status(500).json({ error: `Failed to delete DNS records of type ${recordType}`, message: error.message });
-    }
+    const data = await route53.listResourceRecordSets({ HostedZoneId: hostedZoneId }).promise();
+   let newarr = [];
+   newarr.push(data)
+    
+    // Find the record to update
+   // const recordToUpdate = data.ResourceRecordSets.find(recordSet => recordSet.Name === domainName && recordSet.Type === recordType);
+    
+    
+   
+    
   }
 

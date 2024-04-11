@@ -4,33 +4,20 @@ import { success,error } from '../Config/toastify';
 import axios  from 'axios';
 import { ROOT_URL } from '../Urls';
 
-function DeleteModal({ isOpen, closeModal,domainName,hostedid, item,setmydnsrecord ,mydnsrecord}) {
+function UpdatModal({ isOpen, closeModal, item}) {
  const [selectedItem,setSelectedItem] = useState(null);
+ const [isChangeTTl,setisChangeTTl] = useState(false);
+ const [newTTL,setnewTTL] = useState(false);
+ const [isChangeRecord,setisChangeRecord] = useState(false);
+ const [newRecord,setnewRecord]=useState(false);
 
-  const handleRadioChange = (index,record) => {
-    setSelectedItem(index);
-    setmydnsrecord(record.Value)
-  };
 
+
+ 
   const handleConfirm = async () => {
     if (selectedItem !== null) {
         closeModal();
-            success("Deletion Process Started")
-            try {
-              const postUrl = `${ROOT_URL}/dns/delterecordmany?domainName=${domainName}&recordType=${item.Type}&hostedZoneId=${hostedid}&ttl=${item.TTL}&resourceValue=${mydnsrecord.trim()}`;
-              const response = await axios.delete(postUrl);
-              success('Record removed');
-              setmydnsrecord(null)
-               
-              
-            } catch (err) {
-              error("something went wrong")
-              
-              console.error('Error:', error);
-              // Handle error here, if needed
-            
           
-             }
           
       
     } else {
@@ -47,25 +34,32 @@ function DeleteModal({ isOpen, closeModal,domainName,hostedid, item,setmydnsreco
       className="modal"
     >
       <div className="bg-white rounded-lg p-6">
-        <h2 className="text-2xl font-bold mb-4">Select Record to Delete</h2>
+        <h2 className="text-2xl font-bold mb-4"> Record to Update Type <span className='text-4xl text-green-800 font-semibold'>{item.Type}</span></h2>
+        <p className='px-2 font-semibold text-sm'>Current Record:</p>
+        <p className='font-semibold text-2xl'>TTL</p>
+        <p>{item.TTL}</p>
+        <p className='font-semibold text-2xl'>Record</p>
         {item && (
           <div>
             <ul>
               {item.ResourceRecords.map((record, index) => (
                 <li key={index} className="flex items-center">
-                  <input
-                    type="radio"
-                    id={`record-${index}`}
-                    className="mr-2"
-                    checked={selectedItem === index}
-                    onChange={() => handleRadioChange(index,record)}
-                  />
+                 
                   <label htmlFor={`record-${index}`}>{record.Value}</label>
                 </li>
               ))}
             </ul>
           </div>
         )}
+        <div>
+        <p className='px-2 font-semibold text-sm'>New Record:</p>
+        <p className='font-semibold text-2xl'>TTL</p>
+        {isChangeTTl ? (<button onClick={()=>setisChangeTTl(true)}>Change TTL</button>  
+      ):(
+       
+      )}
+
+        </div>
         <div className="flex w-64 justify-between mt-4">
         <button onClick={handleConfirm} className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">
             Confirm
@@ -80,4 +74,4 @@ function DeleteModal({ isOpen, closeModal,domainName,hostedid, item,setmydnsreco
   );
 }
 
-export default DeleteModal;
+export default UpdatModal;
